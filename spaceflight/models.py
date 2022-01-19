@@ -54,6 +54,7 @@ class Articles(models.Model):
         null=True,
         blank=True
     )
+    ref_original_id = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

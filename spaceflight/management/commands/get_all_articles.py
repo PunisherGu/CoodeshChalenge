@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
-from spaceflight.models import Articles, Launches, Events
 import requests
+
+from spaceflight.models import Articles, Launches, Events
+
 
 class Command(BaseCommand):
     help = 'Get all articles to populate DB'
@@ -9,10 +11,18 @@ class Command(BaseCommand):
     #     parser.add_argument('poll_ids', nargs='+', type=int)
 
     def handle(self, *args, **options):
-        response = requests.get('https://api.spaceflightnewsapi.net/v3/articles/')
+        get_count_articles = requests.get('https://api.spaceflightnewsapi.net/v3/articles/count')
+        count_articles = get_count_articles.json()
+        path=f'https://api.spaceflightnewsapi.net/v3/articles/?_sort=id&_limit={count_articles}'
+        print("######################### Starting ################")
+        response = requests.get(path)
+        count = 0
         if response.status_code == 200:
             response_json = response.json()
+            print(f'Total articles - {count_articles}')
             for article in response_json:
+                count = count + 1
+                print(f'Article {count} de {count_articles}')
                 if article['launches'] != []:
                     article_launches = article['launches']
                     for launch in article_launches:
@@ -39,5 +49,6 @@ class Command(BaseCommand):
                     featured=article['featured'],
                     launches=launches,
                     events=events,
-                    published_at=article['publishedAt']
+                    published_at=article['publishedAt'],
+                    ref_original_id=article['id']
                 )
