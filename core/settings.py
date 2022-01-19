@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 from celery.schedules import crontab
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,19 +80,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = "redis://redis:6379"
 
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['DB_NAME'],
+            'USER': os.environ['DB_USER'],
+            'PASSWORD': os.environ['DB_PASS'],
+            'HOST': os.environ['DB_HOST'],
+            'PORT': 3306,
+        },
     }
-}
 
 
 # Password validation
@@ -140,6 +144,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_BEAT_SCHEDULE = {
     "get_new_articles": {
         "task": "articles",
-        "schedule": crontab(minute="*/1"),
+        "schedule": crontab(hour=9, minute=0, day_of_week='*'),
     },
 }

@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    command: >
+      sh -c "python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+
+    environment:
+      - DB_HOST=kutnpvrhom7lki7u.cbetxkdyhwsb.us-east-1.rds.amazonaws.com
+      - DB_NAME=hh9bnl7ox34q693a
+      - DB_USER=fzmkpfncti877qsn
+      - DB_PASS=bsgruk75joknw5dr
+      - SECRET_KEY='5^3y(kp(lo7fcps_d2z5khnfd!hx^vq+uf%kcimwdurz%e@pjr'
+    depends_on:
+      - db
+             
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DB=kutnpvrhom7lki7u.cbetxkdyhwsb.us-east-1.rds.amazonaws.com
+      - MYSQL_USER=fzmkpfncti877qsn
+      - MYSQL_PASSWORD=bsgruk75joknw5dr
+      - MYSQL_ROOT_PASSWORD=bsgruk75joknw5dr
+    ports:
+      - "3307:3306"
+
+  redis:
+    image: redis:alpine
+  celery:
+    build:
+      context: .
+    command: celery -A core worker -l info
+    volumes:
+      - .:/code
+    environment:
+      - DB_HOST=kutnpvrhom7lki7u.cbetxkdyhwsb.us-east-1.rds.amazonaws.com
+      - DB_NAME=hh9bnl7ox34q693a
+      - DB_USER=fzmkpfncti877qsn
+      - DB_PASS=bsgruk75joknw5dr
+      - SECRET_KEY='5^3y(kp(lo7fcps_d2z5khnfd!hx^vq+uf%kcimwdurz%e@pjr'
+    depends_on:
+      - redis
+  
+  celery-beat:
+    build:
+     context: .
+    command: celery -A core beat -l info
+    volumes:
+      - .:/code
+    environment:
+      - DB_HOST=kutnpvrhom7lki7u.cbetxkdyhwsb.us-east-1.rds.amazonaws.com
+      - DB_NAME=hh9bnl7ox34q693a
+      - DB_USER=fzmkpfncti877qsn
+      - DB_PASS=bsgruk75joknw5dr
+      - SECRET_KEY='5^3y(kp(lo7fcps_d2z5khnfd!hx^vq+uf%kcimwdurz%e@pjr'
+    depends_on:
+      - redis
+
+
+
