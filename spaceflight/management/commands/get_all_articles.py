@@ -12,9 +12,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         newest_article = Articles.objects.first()
+        if newest_article:
+            path = f'https://api.spaceflightnewsapi.net/v3/articles/?_sort=id&id_gt={newest_article.ref_original_id}&_limit=100000'
+        else:
+            get_count_articles = requests.get('https://api.spaceflightnewsapi.net/v3/articles/count')
+            count_articles = get_count_articles.json()
+            path=f'https://api.spaceflightnewsapi.net/v3/articles/?_sort=id&_limit={count_articles}'
+
         get_count_articles = requests.get('https://api.spaceflightnewsapi.net/v3/articles/count')
         count_articles = get_count_articles.json()
-        path = f'https://api.spaceflightnewsapi.net/v3/articles/?_sort=id&id_gt={newest_article.ref_original_id}&_limit=100000'
         print("######################### Starting ################")
         response = requests.get(path)
         count = 0

@@ -14,7 +14,7 @@ This is a challenge proposed by coodesh, basically we are consuming and CRUDing 
 
 This project use Docker for run, so run commands bellow
 ```python
-docker-compose up
+docker-compose up --build
 ```
 ##
 

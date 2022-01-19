@@ -10,7 +10,6 @@ from spaceflight.models import Articles, Events, Launches
 def get_new_articles():
     newest_article = Articles.objects.first()
     path = f'https://api.spaceflightnewsapi.net/v3/articles/?_sort=id&id_gt={newest_article.ref_original_id}&_limit=100000'
-    print(path)
     response = requests.get(path)
     count = 0
     if response.status_code == 200:
