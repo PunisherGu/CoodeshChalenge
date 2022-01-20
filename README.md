@@ -34,4 +34,9 @@ python manage.py test
 ```
 
 ##
+
+PS: 
+The credentials as well as the secret key are exposed in the code for easier evaluation, obviously in a real environment this would be stored in environment variables
+
+##
 This is a challenge by [Coodesh](https://coodesh.com/)
